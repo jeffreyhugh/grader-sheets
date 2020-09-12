@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-const submissionDirectory = "./submissions/lab1"
+const submissionDirectory = "./submissions"
 
 func CountSubmissions() (int, error) {
 	files, err := ioutil.ReadDir(submissionDirectory) // TODO changeable directory
