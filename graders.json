@@ -1,0 +1,17 @@
+{
+  "graders": [
+    {
+      "first": "Jeff",
+      "last": "Micono",
+      "grade": 4,
+      "email": "jeffrey.micono@student.nmt.edu",
+      "conflicts": ["vossenlux"]
+    },{
+      "first": "Sam",
+      "last": "Nix",
+      "grade": 4,
+      "email": "samuel.nix@student.nmt.edu",
+      "conflicts": []
+    }
+  ]
+}
