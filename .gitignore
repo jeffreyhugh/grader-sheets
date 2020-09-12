@@ -3,3 +3,5 @@ submissions/*
 .idea
 .idea/*
 graders.json
+graderemails.txt
+graderlist.txt

@@ -3,7 +3,9 @@ package main
 import (
 	"./functions"
 	"./structures"
+	"bufio"
 	"fmt"
+	"os"
 	"strings"
 )
 
@@ -28,34 +30,64 @@ func main() {
 	if submissionCount == graderAssignmentCount {
 		fmt.Printf("Grader Assignment Count == Submission Count (%d == %d), continuing\n", graderAssignmentCount, submissionCount)
 	} else if submissionCount > graderAssignmentCount {
-		fmt.Printf("Warning: Grader Assignment Count mismatch Submission Count (%d != %d)\n", graderAssignmentCount, submissionCount)
+		fmt.Printf("Warning: Grader Assignment Count less than Submission Count (%d < %d)\n", graderAssignmentCount, submissionCount)
 		fmt.Printf("Some graders will (randomly) get more assignments than they requested. To prevent random assignment, increase the 'grade' field for graders in graders.json\n")
 	} else if submissionCount < graderAssignmentCount {
-		fmt.Printf("Warning: Grader Assignment Count mismatch Submission Count (%d != %d)\n", graderAssignmentCount, submissionCount)
+		fmt.Printf("Warning: Grader Assignment Count greater than Submission Count (%d > %d)\n", graderAssignmentCount, submissionCount)
 		fmt.Printf("Some graders will (randomly) get fewer assignments than they requested.\n")
 	}
 
 	graderList, err := functions.MakeGraderList(graders.G)
 
-	fmt.Printf("\n\n\n")
 	printGraderEmails(graders)
-	fmt.Printf("\n")
 	printGraderList(graderList)
-	fmt.Printf("\n\n\n")
+	fmt.Printf("\nSuccessfully wrote grader info and grader sheet. Run ./print.sh to view the results.\n")
 }
 
 func printGraderList(input map[string]*[]string) {
-	fmt.Printf("Name (LastFirst)|Student|Filename\n")
+	file, err := os.Create("./graderlist.txt")
+	if err != nil {
+		panic(err)
+	}
+	defer file.Close()
+
+	w := bufio.NewWriter(file)
+
+	_, err = fmt.Fprintf(w, "Name (LastFirst)|Student|Filename\n")
+	if err != nil {
+		panic(err)
+	}
 	for grader, gradees := range input {
 		for _, g := range *gradees {
-			fmt.Printf("%s|%s|%s\n", grader, strings.Split(g, "_")[0], g)
+			_, err := fmt.Fprintf(w, "%s|%s|%s\n", grader, strings.Split(g, "_")[0], g)
+			if err != nil {
+				panic(err)
+			}
 		}
 	}
+
+	w.Flush()
 }
 
 func printGraderEmails(input *structures.Graders) {
-	fmt.Printf("Name (LastFirst)|Email\n")
-	for _, g := range *input.G {
-		fmt.Printf("%s%s|%s\n", g.Last, g.First, g.Email)
+	file, err := os.Create("./graderemails.txt")
+	if err != nil {
+		panic(err)
 	}
+	defer file.Close()
+
+	w := bufio.NewWriter(file)
+
+	_, err = fmt.Fprintf(w, "Name (LastFirst)|Email\n")
+	if err != nil {
+		panic(err)
+	}
+	for _, g := range *input.G {
+		_, err := fmt.Fprintf(w, "%s%s|%s\n", g.Last, g.First, g.Email)
+		if err != nil {
+			panic(err)
+		}
+	}
+
+	w.Flush()
 }
