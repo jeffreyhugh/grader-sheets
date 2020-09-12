@@ -30,24 +30,28 @@ func MakeGraderList(graders *[]structures.Grader) (map[string]*[]string, error) 
 		author := strings.Split(f.Name(), "_")[0]
 		foundGrader := false
 
-		// attempt to assign a grader
-		gradersDereferencedCopy := gradersDereferenced
 		var g structures.Grader
-		for {
-			gradersDereferencedCopy, g = pop(gradersDereferencedCopy)
-			if g.Last == "" { // basically if pop failed
-				break
-			} else if !isConflict(g, author) && len(*graderList[fmt.Sprintf("%s%s", g.Last, g.First)]) < g.Grade { // haha n^3 go brrrt
-				*graderList[fmt.Sprintf("%s%s", g.Last, g.First)] = append(*graderList[fmt.Sprintf("%s%s", g.Last, g.First)], f.Name())
-				foundGrader = true
-				break
+		gradersDereferencedCopy := make([]structures.Grader, len(gradersDereferenced))
+		copy(gradersDereferencedCopy, gradersDereferenced)
+
+		// attempt to assign a grader
+		if !foundGrader {
+			for {
+				gradersDereferencedCopy, g = pop(gradersDereferencedCopy)
+				if g.Last == "" { // basically if pop failed
+					break
+				} else if !isConflict(g, author) && len(*graderList[fmt.Sprintf("%s%s", g.Last, g.First)]) < g.Grade { // haha n^3 go brrrt
+					*graderList[fmt.Sprintf("%s%s", g.Last, g.First)] = append(*graderList[fmt.Sprintf("%s%s", g.Last, g.First)], f.Name())
+					foundGrader = true
+					break
+				}
 			}
 		}
 
+		gradersDereferencedCopy = make([]structures.Grader, len(gradersDereferenced))
+		copy(gradersDereferencedCopy, gradersDereferenced)
 		// assign to random grader without conflict, regardless of number of assignments
 		if !foundGrader {
-			gradersDereferencedCopy := gradersDereferenced
-			var g structures.Grader
 			for {
 				gradersDereferencedCopy, g = pop(gradersDereferencedCopy)
 				if g.Last == "" {
@@ -80,11 +84,12 @@ func isConflict(g structures.Grader, author string) bool {
 }
 
 func pop(input []structures.Grader) ([]structures.Grader, structures.Grader) {
+	inputCopy := input
 	if len(input) == 0 {
 		return nil, structures.Grader{}
 	}
-	choice := rand.Intn(len(input))
-	popped := input[choice]
-	input[choice] = input[len(input) - 1]
-	return input[:len(input)-1], popped
+	choice := rand.Intn(len(inputCopy))
+	popped := inputCopy[choice]
+	inputCopy[choice] = inputCopy[len(inputCopy) - 1]
+	return inputCopy[:len(inputCopy)-1], popped
 }

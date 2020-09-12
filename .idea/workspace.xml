@@ -2,13 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="363c9ec1-6cb4-43a8-9957-d7349016d486" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/functions/count_grader_assignments.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/functions/count_submissions.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/functions/make_grader_list.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/functions/unmarshal_graders.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/graders.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/structures/grader.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/functions/make_grader_list.go" beforeDir="false" afterPath="$PROJECT_DIR$/functions/make_grader_list.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -46,5 +43,11 @@
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="623" y="210" width="672" height="678" key="search.everywhere.popup" timestamp="1599902835988">
+      <screen x="0" y="0" width="1920" height="985" />
+    </state>
+    <state x="623" y="210" width="672" height="678" key="search.everywhere.popup/0.0.1920.985@0.0.1920.985" timestamp="1599902835988" />
   </component>
 </project>
