@@ -4,6 +4,9 @@ Automatically generate grader sheets. Supports conflicts of interest and differe
 Designed for use with the Canvas LMS. Canvas can download all submissions with a predictable pattern:
 `lastfirst_submitted-filename.ext`. 
 
+### Important - FERPA
+The "filename" column of the output should be censored prior to releasing the grader sheet for students. If a student has submitted late, the word "LATE" appears in the filename. Disclosing which students have submitted late is a violation of FERPA.
+
 ### Quickstart
 - Create `graders.json`
   - "grade" - how many assignments should this program attempt to assign (default in `strutures/grader.go`)
