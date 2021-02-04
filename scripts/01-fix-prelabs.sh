@@ -1,5 +1,6 @@
 #!/bin/bash
 
+cd ..
 cd $1
 
 for file in *.tar.gz ; do mv $file ${file//lab0_/lab0-} ; done
