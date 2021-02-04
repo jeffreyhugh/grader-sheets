@@ -1,8 +1,11 @@
 submissions
 submissions/*
 submissions.zip
+submissions-*
+submissions-*/
 .idea
 .idea/*
 graders.json
 graderemails.txt
 graderlist.txt
+grader-sheets
