@@ -44,4 +44,5 @@ sheet gets created.
   passed as the first argument to the script
 
 ### Todo
+- Support "placeholders"
 - Make the code less unreadable
