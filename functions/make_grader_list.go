@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-func MakeGraderList(graders *[]structures.Grader) (map[string]*[]string, error) {
+func MakeGraderList(config *structures.Config, graders *[]structures.Grader) (map[string]*[]string, error) {
 	gradersDereferenced := *graders
 	graderList := make(map[string]*[]string, 0)
 	for _, g := range *graders {
@@ -17,7 +17,7 @@ func MakeGraderList(graders *[]structures.Grader) (map[string]*[]string, error) 
 		graderList[fmt.Sprintf("%s%s", g.Last, g.First)] = &gradees
 	}
 
-	files, err := ioutil.ReadDir(submissionDirectory) // TODO changeable directory
+	files, err := ioutil.ReadDir(config.SubmissionsDirectory)
 	if err != nil {
 		return nil, err
 	}

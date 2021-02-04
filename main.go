@@ -4,13 +4,47 @@ import (
 	"./functions"
 	"./structures"
 	"bufio"
+	"flag"
 	"fmt"
 	"os"
 	"strings"
 )
 
 func main() {
-	graders, err := functions.UnmarshalGraders("") // TODO command-line argument to pass graderJson
+	gradersJson := ""
+	configJson := ""
+	submissionsZip := ""
+	help := false
+
+	flag.StringVar(&gradersJson, "g", "", "Location of graders.json.")
+	flag.StringVar(&submissionsZip, "s", "", "Location of submissions.zip.")
+	flag.StringVar(&configJson, "c", "", "Location of config.json.")
+	flag.BoolVar(&help, "h", false, "Print help and exit")
+
+	flag.Usage = func() {
+		fmt.Printf("Usage: ./grader-sheets -c path/to/config.json -g path/to/graders.json -s path/to/submissions.zip\n")
+	}
+
+	flag.Parse()
+
+	if help {
+		fmt.Printf("Usage: ./grader-sheets -c path/to/config.json -g path/to/graders.json -s path/to/submissions.zip\n")
+		return
+	}
+
+	if gradersJson == "" || submissionsZip == "" || configJson == "" {
+		fmt.Printf("Usage: ./grader-sheets -c path/to/config.json -g path/to/graders.json -s path/to/submissions.zip\n")
+		return
+	}
+
+	config, err := functions.UnmarshalConfig(configJson)
+	if err != nil {
+		panic(err)
+	}
+	config.SubmissionsZip = submissionsZip
+	config.GradersJson = gradersJson
+
+	graders, err := functions.UnmarshalGraders(gradersJson)
 	if err != nil {
 		panic(err)
 	}
@@ -20,11 +54,16 @@ func main() {
 		panic("0 grader assignments counted")
 	}
 
-	submissionCount, err := functions.CountSubmissions()
+	submissionCount, err := functions.CountSubmissions(config)
 	if err != nil {
 		panic(err)
 	} else if submissionCount == 0 {
 		panic("0 submissions detected")
+	}
+
+	fmt.Printf("Running all scripts in ./scripts\n")
+	if err := functions.RunScripts(config.SubmissionsDirectory); err != nil {
+		panic(err)
 	}
 
 	if submissionCount == graderAssignmentCount {
@@ -37,7 +76,7 @@ func main() {
 		fmt.Printf("Some graders will (randomly) get fewer assignments than they requested.\n")
 	}
 
-	graderList, err := functions.MakeGraderList(graders.G)
+	graderList, err := functions.MakeGraderList(config, graders.G)
 
 	printGraderEmails(graders)
 	printGraderList(graderList)
@@ -49,24 +88,24 @@ func printGraderList(input map[string]*[]string) {
 	if err != nil {
 		panic(err)
 	}
-	defer file.Close()
 
 	w := bufio.NewWriter(file)
 
-	_, err = fmt.Fprintf(w, "Name (LastFirst)|Student|Filename\n")
+	_, err = fmt.Fprintf(w, "Name (LastFirst)|Student\n")
 	if err != nil {
 		panic(err)
 	}
 	for grader, gradees := range input {
 		for _, g := range *gradees {
-			_, err := fmt.Fprintf(w, "%s|%s|%s\n", grader, strings.Split(g, "_")[0], g)
+			_, err := fmt.Fprintf(w, "%s|%s\n", grader, strings.Split(g, "_")[0])
 			if err != nil {
 				panic(err)
 			}
 		}
 	}
 
-	w.Flush()
+	_ = w.Flush()
+	_ = file.Close()
 }
 
 func printGraderEmails(input *structures.Graders) {
@@ -74,7 +113,6 @@ func printGraderEmails(input *structures.Graders) {
 	if err != nil {
 		panic(err)
 	}
-	defer file.Close()
 
 	w := bufio.NewWriter(file)
 
@@ -89,5 +127,6 @@ func printGraderEmails(input *structures.Graders) {
 		}
 	}
 
-	w.Flush()
+	_ = w.Flush()
+	_ = file.Close()
 }

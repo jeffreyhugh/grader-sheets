@@ -7,13 +7,7 @@ import (
 	"os"
 )
 
-const defaultGraderJson = "./graders.json"
-
 func UnmarshalGraders(graderJson string) (*structures.Graders, error) {
-	if graderJson == "" {
-		graderJson = defaultGraderJson
-	}
-
 	jsonFile, err := os.Open(graderJson)
 	if err != nil {
 		return nil, err
