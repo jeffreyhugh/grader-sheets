@@ -1,5 +1,11 @@
 #!/bin/bash
 
-column graderemails.txt -t -s "|"
+if [[ -z $1 ]]; then
+  to_grade="graderlist.txt"
+else
+  to_grade=$1
+fi
+
 echo ""
-column graderlist.txt -t -s "|"
+column "$to_grade" -t -s "|"
+echo ""

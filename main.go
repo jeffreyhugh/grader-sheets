@@ -61,29 +61,28 @@ func main() {
 		panic("0 submissions detected")
 	}
 
-	fmt.Printf("Running all scripts in ./scripts\n")
+	fmt.Printf("[INFO] Running all scripts in ./scripts\n")
 	if err := functions.RunScripts(config.SubmissionsDirectory); err != nil {
-		panic(err)
+		fmt.Printf("[WARN] %s\n", err.Error())
 	}
 
 	if submissionCount == graderAssignmentCount {
-		fmt.Printf("Grader Assignment Count == Submission Count (%d == %d), continuing\n", graderAssignmentCount, submissionCount)
+		fmt.Printf("[INFO] Grader Assignment Count == Submission Count (%d == %d), continuing\n", graderAssignmentCount, submissionCount)
 	} else if submissionCount > graderAssignmentCount {
-		fmt.Printf("Warning: Grader Assignment Count less than Submission Count (%d < %d)\n", graderAssignmentCount, submissionCount)
-		fmt.Printf("Some graders will (randomly) get more assignments than they requested. To prevent random assignment, increase the 'grade' field for graders in graders.json\n")
+		fmt.Printf("[WARN] Grader Assignment Count less than Submission Count (%d < %d)\n", graderAssignmentCount, submissionCount)
+		fmt.Printf("[WARN] Some graders will (randomly) get more assignments than they requested. To prevent random assignment, increase the 'grade' field for graders in graders.json\n")
 	} else if submissionCount < graderAssignmentCount {
-		fmt.Printf("Warning: Grader Assignment Count greater than Submission Count (%d > %d)\n", graderAssignmentCount, submissionCount)
-		fmt.Printf("Some graders will (randomly) get fewer assignments than they requested.\n")
+		fmt.Printf("[WARN] Grader Assignment Count greater than Submission Count (%d > %d)\n", graderAssignmentCount, submissionCount)
+		fmt.Printf("[WARN] Some graders will (randomly) get fewer assignments than they requested.\n")
 	}
 
 	graderList, err := functions.MakeGraderList(config, graders.G)
 
-	printGraderEmails(graders)
-	printGraderList(graderList)
-	fmt.Printf("\nSuccessfully wrote grader info and grader sheet. Run ./print.sh to view the results.\n")
+	printGraderList(graderList, graders)
+	fmt.Printf("\n[INFO] Successfully wrote grader info and grader sheet. Run ./print.sh to view the results.\n")
 }
 
-func printGraderList(input map[string]*[]string) {
+func printGraderList(input map[string]*[]string, graderList *structures.Graders) {
 	file, err := os.Create("./graderlist.txt")
 	if err != nil {
 		panic(err)
@@ -91,13 +90,13 @@ func printGraderList(input map[string]*[]string) {
 
 	w := bufio.NewWriter(file)
 
-	_, err = fmt.Fprintf(w, "Name (LastFirst)|Student\n")
+	_, err = fmt.Fprintf(w, "Name (LastFirst)|Email|Student\n")
 	if err != nil {
 		panic(err)
 	}
 	for grader, gradees := range input {
 		for _, g := range *gradees {
-			_, err := fmt.Fprintf(w, "%s|%s\n", grader, strings.Split(g, "_")[0])
+			_, err := fmt.Fprintf(w, "%s|%s|%s\n", grader, getGraderEmailByName(grader, graderList), strings.Split(g, "_")[0])
 			if err != nil {
 				panic(err)
 			}
@@ -108,25 +107,13 @@ func printGraderList(input map[string]*[]string) {
 	_ = file.Close()
 }
 
-func printGraderEmails(input *structures.Graders) {
-	file, err := os.Create("./graderemails.txt")
-	if err != nil {
-		panic(err)
-	}
-
-	w := bufio.NewWriter(file)
-
-	_, err = fmt.Fprintf(w, "Name (LastFirst)|Email\n")
-	if err != nil {
-		panic(err)
-	}
-	for _, g := range *input.G {
-		_, err := fmt.Fprintf(w, "%s%s|%s\n", g.Last, g.First, g.Email)
-		if err != nil {
-			panic(err)
+func getGraderEmailByName(input string, graderList *structures.Graders) string {
+	for _, grader := range *graderList.G {
+		if strings.EqualFold(input, fmt.Sprintf("%s%s", grader.Last, grader.First)) {
+			return grader.Email
 		}
 	}
 
-	_ = w.Flush()
-	_ = file.Close()
+	return ""
 }
+

@@ -58,7 +58,7 @@ func MakeGraderList(config *structures.Config, graders *[]structures.Grader) (ma
 					break
 				} else if !isConflict(g, author) {
 					*graderList[fmt.Sprintf("%s%s", g.Last, g.First)] = append(*graderList[fmt.Sprintf("%s%s", g.Last, g.First)], f.Name())
-					fmt.Printf("Warning: assigned %s to %s while ignoring requested workload\n", f.Name(), fmt.Sprintf("%s%s", g.Last, g.First))
+					fmt.Printf("[WARN] assigned %s to %s while ignoring requested workload\n", f.Name(), fmt.Sprintf("%s%s", g.Last, g.First))
 					foundGrader = true
 					break
 				}
@@ -67,7 +67,7 @@ func MakeGraderList(config *structures.Config, graders *[]structures.Grader) (ma
 
 		// all graders have a conflict with this assignment
 		if !foundGrader {
-			fmt.Printf("Warning: Assignment %s has no valid graders\n", f.Name())
+			fmt.Printf("[WARN] Assignment %s has no valid graders\n", f.Name())
 		}
 	}
 
